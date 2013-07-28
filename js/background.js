@@ -6,6 +6,18 @@
  */
 var issues = {};
 
+function parsePullRequestUrl(url) {
+    var matches = url.match(/^https:\/\/github\.com\/([\w_\-]+)\/([\w_\-]+)\/pull\/(\d+)/);
+    if (matches) {
+        var owner = matches[1];
+        var repo = matches[2];
+        var number = matches[3];
+        return {"owner": owner, "repo": repo, "number": number};
+    } else {
+        return null;
+    }
+}
+
 function loadAccessToken() {
     return localStorage['access_token'];
 }
@@ -35,19 +47,24 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
     if (change_status == 'loading') {
         var access_token = localStorage['access_token'];
         if (access_token) {
-            var matches = tab.url.match(/^https:\/\/github\.com\/([\w_\-]+)\/([\w_\-]+)\/pull\/(\d+)/);
-            if (matches) {
-                var owner = matches[1];
-                var repo = matches[2];
-                var number = matches[3];
+            var parsed = parsePullRequestUrl(tab.url);
+            if (parsed) {
+                var owner = parsed["owner"];
+                var repo = parsed["repo"];
+                var number = parsed["number"];
+                var popup = "/html/popup.html?owner=" + owner + "&repo=" + repo + "&number=" + number;
                 var key = getIssueKey(owner, repo, number);
                 if (!issues[key]) {
                     loadIssue(owner, repo, number, function(data) {
                         console.log(data);
                         issues[key] = data;
+                        chrome.pageAction.show(tabId);
+                        chrome.pageAction.setPopup({"tabId": tabId, "popup": popup});
                     });
+                } else {
+                    chrome.pageAction.show(tabId);
+                    chrome.pageAction.setPopup({"tabId": tabId, "popup": popup});
                 }
-                chrome.pageAction.show(tabId);
             }
         }
     }
