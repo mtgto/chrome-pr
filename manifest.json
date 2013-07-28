@@ -3,6 +3,19 @@
     "name": "GitHub Pull Request Support",
     "version": "0.1",
     "description": "Show the code review's completions of the reviewers.",
+    "icons": {
+        "48": "img/icon48.png",
+        "128": "img/icon128.png"
+    },
     "options_page": "html/options.html",
-    "permissions": ["https://github.com/"]
+    "page_action": {
+        "default_icon": {
+            "19": "img/page19.png",
+            "38": "img/page38.png"
+        }
+    },
+    "permissions": ["tabs", "https://github.com/"],
+    "background": {
+        "scripts": ["js/jquery-2.0.3.min.js", "js/background.js"]
+    }
 }
