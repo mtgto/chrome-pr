@@ -1,0 +1,8 @@
+{
+    "manifest_version": 2,
+    "name": "GitHub Pull Request Support",
+    "version": "0.1",
+    "description": "Show the code review's completions of the reviewers.",
+    "options_page": "html/options.html",
+    "permissions": ["https://github.com/"]
+}
